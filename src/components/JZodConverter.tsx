@@ -137,7 +137,7 @@ export default function JZodConverter() {
                         Proudly Open Source by <a href="https://preciousadedokun.com.ng" className="text-primary hover:underline underline-offset-4 decoration-2">Apcodesphere</a>
                     </p>
                     <div className="flex items-center justify-center gap-8 opacity-40 hover:opacity-100 transition-opacity">
-                        <a href="https://github.com/apcodesphere/jzod" className="hover:text-primary transition-colors">
+                        <a href="https://github.com/apreezofficial/jzod-app" className="hover:text-primary transition-colors">
                             <Github size={20} />
                         </a>
                         <a href="#" className="hover:text-primary transition-colors">

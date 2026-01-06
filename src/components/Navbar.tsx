@@ -64,8 +64,7 @@ export function Navbar() {
                     )}
 
                     <a
-                        href="https://github.com/apcodesphere/jzod"
-                        target="_blank"
+                        href="https://github.com/apreezofficial/jzod-app"                        target="_blank"
                         rel="noopener noreferrer"
                         className="hidden md:flex items-center gap-2 px-4 py-2 bg-foreground text-background rounded-xl text-sm font-bold hover:opacity-90 transition-opacity"
                     >
@@ -106,7 +105,7 @@ export function Navbar() {
                         </Link>
                     ))}
                     <a
-                        href="https://github.com/apcodesphere/jzod"
+                        href="https://github.com/apreezofficial/jzod-app"
                         className="p-4 bg-foreground text-background rounded-2xl text-center font-bold"
                     >
                         Star on GitHub
