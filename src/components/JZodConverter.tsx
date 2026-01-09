@@ -2,25 +2,46 @@
 
 import * as React from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Code2, Copy, Check, Terminal, Zap, Github, Braces, Sparkles } from "lucide-react"
-import { jsonToZod } from "@/lib/converter"
+import { Code2, Copy, Check, Terminal, Zap, Github, Braces, Sparkles, ArrowLeftRight, Palette, Layout, Box, Wand2 } from "lucide-react"
+import { jsonToZod, zodToJson } from "@/lib/converter"
+
+const TEMPLATES = [
+    { id: "default", name: "Modern Glass", class: "bg-primary/10 blur-[120px]" },
+    { id: "nebula", name: "Deep Nebula", class: "bg-purple-600/20 blur-[150px] mix-blend-screen" },
+    { id: "emerald", name: "Emerald Forest", class: "bg-emerald-500/15 blur-[100px]" },
+    { id: "dawn", name: "Golden Dawn", class: "bg-orange-500/10 blur-[130px]" },
+    { id: "cyber", name: "Cyberpunk", class: "bg-cyan-500/20 blur-[140px]" },
+]
 
 export default function JZodConverter() {
     const [input, setInput] = React.useState('{\n  "name": "JZod",\n  "version": 1,\n  "isActive": true,\n  "features": ["conversion", "copy-paste"],\n  "author": {\n    "name": "Apcodesphere",\n    "github": "https://github.com/apcodesphere"\n  }\n}')
     const [output, setOutput] = React.useState("")
     const [isValid, setIsValid] = React.useState(true)
     const [copied, setCopied] = React.useState(false)
+    const [mode, setMode] = React.useState<"json-to-zod" | "zod-to-json">("json-to-zod")
+    const [template, setTemplate] = React.useState(TEMPLATES[0])
 
     React.useEffect(() => {
-        try {
-            const data = JSON.parse(input)
-            setOutput(jsonToZod(data))
-            setIsValid(true)
-        } catch (e) {
-            setIsValid(false)
-            setOutput("// Invalid JSON input")
+        if (mode === "json-to-zod") {
+            try {
+                const data = JSON.parse(input)
+                setOutput(jsonToZod(data))
+                setIsValid(true)
+            } catch (e) {
+                setIsValid(false)
+                setOutput("// Invalid JSON input")
+            }
+        } else {
+            const result = zodToJson(input)
+            setOutput(result)
+            setIsValid(!result.startsWith("//"))
         }
-    }, [input])
+    }, [input, mode])
+
+    const toggleMode = () => {
+        setMode(prev => prev === "json-to-zod" ? "zod-to-json" : "json-to-zod")
+        setInput(output)
+    }
 
     const copyToClipboard = () => {
         navigator.clipboard.writeText(output)
@@ -31,9 +52,27 @@ export default function JZodConverter() {
     return (
         <div className="min-h-screen relative flex flex-col items-center px-4 py-20 overflow-hidden">
             {/* Background elements */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-primary/10 blur-[120px] rounded-full pointer-events-none" />
+            <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] rounded-full pointer-events-none transition-all duration-1000 ${template.class}`} />
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none" />
 
             <div className="relative w-full max-w-6xl">
+                {/* Template Selector & Mode Toggle */}
+                <div className="flex flex-wrap items-center justify-center gap-4 mb-8">
+                    <div className="flex bg-foreground/5 p-1 rounded-2xl border border-foreground/10 backdrop-blur-sm">
+                        {TEMPLATES.map((t) => (
+                            <button
+                                key={t.id}
+                                onClick={() => setTemplate(t)}
+                                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${template.id === t.id
+                                        ? "bg-primary text-primary-foreground shadow-lg"
+                                        : "hover:bg-foreground/5 text-foreground/50"
+                                    }`}
+                            >
+                                {t.name}
+                            </button>
+                        ))}
+                    </div>
+                </div>
                 {/* Header */}
                 <div className="text-center mb-16 px-4">
                     <motion.div
@@ -49,10 +88,25 @@ export default function JZodConverter() {
                             JZOD<span className="text-primary">.</span>
                         </h1>
                         <p className="text-lg md:text-xl text-foreground/60 max-w-2xl mx-auto font-medium leading-relaxed">
-                            The cleanest way to transform your JSON into Zod schemas.
-                            Built for developers who value speed and type-safety.
+                            {mode === "json-to-zod"
+                                ? "The cleanest way to transform your JSON into Zod schemas."
+                                : "Reverse engineer your Zod schemas back into sample JSON objects."}
+                            {" "}Built for developers who value speed and type-safety.
                         </p>
                     </motion.div>
+                </div>
+
+                <div className="flex justify-center mb-12">
+                    <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={toggleMode}
+                        className="group flex items-center gap-3 px-8 py-4 bg-primary text-primary-foreground rounded-2xl font-bold shadow-2xl shadow-primary/20 hover:shadow-primary/40 transition-all"
+                    >
+                        <ArrowLeftRight className={`transition-transform duration-500 ${mode === "zod-to-json" ? "rotate-180" : ""}`} size={20} />
+                        {mode === "json-to-zod" ? "SWITCH TO ZOD → JSON" : "SWITCH TO JSON → ZOD"}
+                        <Wand2 size={18} className="ml-1 animate-pulse" />
+                    </motion.button>
                 </div>
 
                 {/* Main Converter Grid */}
@@ -65,19 +119,19 @@ export default function JZodConverter() {
                     >
                         <div className="flex items-center justify-between px-6 py-4 border-b border-foreground/5 bg-foreground/[0.02]">
                             <div className="flex items-center gap-2 font-bold text-sm opacity-60">
-                                <Braces size={16} />
-                                JSON INPUT
+                                {mode === "json-to-zod" ? <Braces size={16} /> : <Terminal size={16} />}
+                                {mode === "json-to-zod" ? "JSON INPUT" : "ZOD SCHEMA INPUT"}
                             </div>
                             {!isValid && (
                                 <span className="text-xs font-bold text-red-500 bg-red-500/10 px-2 py-0.5 rounded-full">
-                                    Invalid JSON
+                                    {mode === "json-to-zod" ? "Invalid JSON" : "Invalid Zod Schema"}
                                 </span>
                             )}
                         </div>
                         <textarea
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
-                            placeholder="Paste your JSON here..."
+                            placeholder={mode === "json-to-zod" ? "Paste your JSON here..." : "Paste your Zod schema code here..."}
                             className="flex-1 w-full p-6 bg-transparent resize-none focus:outline-none font-mono text-sm leading-relaxed"
                             spellCheck={false}
                         />
@@ -91,8 +145,8 @@ export default function JZodConverter() {
                     >
                         <div className="flex items-center justify-between px-6 py-4 border-b border-foreground/5 bg-foreground/[0.02]">
                             <div className="flex items-center gap-2 font-bold text-sm text-primary">
-                                <Terminal size={16} />
-                                ZOD SCHEMA
+                                {mode === "json-to-zod" ? <Terminal size={16} /> : <Braces size={16} />}
+                                {mode === "json-to-zod" ? "ZOD SCHEMA" : "JSON OUTPUT"}
                             </div>
                             <button
                                 onClick={copyToClipboard}
