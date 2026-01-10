@@ -46,10 +46,10 @@ export function zodToJson(zodString: string): string {
     try {
         // This is a simplified implementation. A robust one would need a full AST parser.
         // For this demo, we'll try to extract the object structure if present.
-        
+
         let cleaned = zodString.split('export const schema = ')[1] || zodString;
         cleaned = cleaned.split(';')[0]; // Remove after-semicolon stuff
-        
+
         // Very basic mapping back
         const mockValue = (zod: string): any => {
             const z = zod.trim();
@@ -63,7 +63,7 @@ export function zodToJson(zodString: string): string {
                 return [];
             }
             if (z.includes('z.object')) {
-                const match = z.match(/z\.object\(\{(.*)\}\)/s);
+                const match = z.match(/z\.object\(\{([\s\S]*)\}\)/);
                 if (match) {
                     const objStr = match[1];
                     const obj: any = {};
