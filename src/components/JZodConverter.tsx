@@ -58,14 +58,14 @@ export default function JZodConverter() {
             <div className="relative w-full max-w-6xl">
                 {/* Template Selector & Mode Toggle */}
                 <div className="flex flex-wrap items-center justify-center gap-4 mb-8">
-                    <div className="flex bg-foreground/5 p-1 rounded-2xl border border-foreground/10 backdrop-blur-sm">
+                    <div className="flex flex-wrap justify-center bg-foreground/5 p-1 rounded-2xl border border-foreground/10 backdrop-blur-sm">
                         {TEMPLATES.map((t) => (
                             <button
                                 key={t.id}
                                 onClick={() => setTemplate(t)}
                                 className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${template.id === t.id
-                                        ? "bg-primary text-primary-foreground shadow-lg"
-                                        : "hover:bg-foreground/5 text-foreground/50"
+                                    ? "bg-primary text-primary-foreground shadow-lg"
+                                    : "hover:bg-foreground/5 text-foreground/50"
                                     }`}
                             >
                                 {t.name}
